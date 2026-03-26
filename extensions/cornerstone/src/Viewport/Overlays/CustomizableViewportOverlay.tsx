@@ -15,6 +15,9 @@ import { useViewportRendering } from '../../hooks';
 
 const EPSILON = 1e-4;
 const { formatPN } = utils;
+const USE_DUMMY_FINDING_DETAILS = true;
+const DUMMY_FINDING_REFERENCE = 'TEST-REF-001';
+const DUMMY_FINDING_DESCRIPTION = 'Sample finding description for UI validation and layout testing.';
 
 type ViewportData = StackViewportData | VolumeViewportData;
 
@@ -25,6 +28,7 @@ interface OverlayItemProps {
   servicesManager: AppTypes.ServicesManager;
   viewportId: string;
   instance: InstanceMetadata;
+  referenceInstance?: InstanceMetadata;
   customization: any;
   formatters: {
     formatPN: (val) => string;
@@ -47,6 +51,7 @@ const OverlayItemComponents = {
   'ohif.overlayItem.windowLevel': VOIOverlayItem,
   'ohif.overlayItem.zoomLevel': ZoomOverlayItem,
   'ohif.overlayItem.instanceNumber': InstanceNumberOverlayItem,
+  'ohif.overlayItem.findingDetails': FindingDetailsOverlayItem,
 };
 
 /**
@@ -439,6 +444,53 @@ function InstanceNumberOverlayItem({
           `${imageIndex + 1}/${numberOfSlices}`
         )}
       </span>
+    </div>
+  );
+}
+
+/**
+ * Finding details overlay item
+ * Shows finding reference/description in a compact readable block.
+ */
+function FindingDetailsOverlayItem({ instance, referenceInstance, customization }: OverlayItemProps) {
+  const findingReferenceValue =
+    instance?.finding_reference ??
+    instance?.FindingReference ??
+    referenceInstance?.finding_reference ??
+    referenceInstance?.FindingReference;
+  const findingDescriptionValue =
+    instance?.finding_description ??
+    instance?.FindingDescription ??
+    referenceInstance?.finding_description ??
+    referenceInstance?.FindingDescription;
+  const findingReference = findingReferenceValue || (USE_DUMMY_FINDING_DETAILS ? DUMMY_FINDING_REFERENCE : null);
+  const findingDescription =
+    findingDescriptionValue || (USE_DUMMY_FINDING_DETAILS ? DUMMY_FINDING_DESCRIPTION : null);
+  const findingReferenceText = findingReference ? String(findingReference) : null;
+  const findingDescriptionText = findingDescription ? String(findingDescription) : null;
+
+  if (!findingReferenceText && !findingDescriptionText) {
+    return null;
+  }
+
+  return (
+    <div
+      className="overlay-item overlay-finding-details mt-1 flex flex-col rounded-sm bg-black/35 px-2 py-1"
+      style={{ color: customization?.color }}
+      title={customization?.title || 'Finding details'}
+    >
+      {findingReferenceText ? (
+        <div className="flex items-start gap-1">
+          <div className="shrink-0 opacity-[0.70]">Ref:</div>
+          <div className="overlay-finding-reference leading-4">{findingReferenceText}</div>
+        </div>
+      ) : null}
+      {findingDescriptionText ? (
+        <div className="mt-0.5 flex items-start gap-1">
+          <div className="shrink-0 opacity-[0.70]">Finding:</div>
+          <div className="overlay-finding-description leading-4">{findingDescriptionText}</div>
+        </div>
+      ) : null}
     </div>
   );
 }

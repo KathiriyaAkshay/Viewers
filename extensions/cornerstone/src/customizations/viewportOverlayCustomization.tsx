@@ -19,6 +19,12 @@ export default {
       },
       contentF: ({ referenceInstance }) => referenceInstance.SeriesDescription,
     },
+    {
+      id: 'FindingDetails',
+      inheritsFrom: 'ohif.overlayItem.findingDetails',
+      title: 'Finding details',
+      condition: () => true,
+    },
   ],
   'viewportOverlay.topRight': [],
   'viewportOverlay.bottomLeft': [
