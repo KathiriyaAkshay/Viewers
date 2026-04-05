@@ -39,25 +39,11 @@ function ViewerHeader({ appConfig }: withAppTypes<{ appConfig: AppTypes.Config }
   const { t } = useTranslation();
   const { show } = useModal();
 
-  const AboutModal = customizationService.getCustomization(
-    'ohif.aboutModal'
-  ) as Types.MenuComponentCustomization;
-
   const UserPreferencesModal = customizationService.getCustomization(
     'ohif.userPreferencesModal'
   ) as Types.MenuComponentCustomization;
 
   const menuOptions = [
-    {
-      title: AboutModal?.menuTitle ?? t('Header:About'),
-      icon: 'info',
-      onClick: () =>
-        show({
-          content: AboutModal,
-          title: AboutModal?.title ?? t('AboutModal:About OHIF Viewer'),
-          containerClassName: AboutModal?.containerClassName ?? 'max-w-md',
-        }),
-    },
     {
       title: UserPreferencesModal.menuTitle ?? t('Header:Preferences'),
       icon: 'settings',
@@ -85,6 +71,7 @@ function ViewerHeader({ appConfig }: withAppTypes<{ appConfig: AppTypes.Config }
     <Header
       menuOptions={menuOptions}
       isReturnEnabled={!!appConfig.showStudyList}
+      showReturnIcon={false}
       onClickReturnButton={onClickReturnButton}
       WhiteLabeling={appConfig.whiteLabeling}
       Secondary={<Toolbar buttonSection="secondary" />}

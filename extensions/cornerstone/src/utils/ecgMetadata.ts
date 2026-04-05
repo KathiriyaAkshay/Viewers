@@ -1,3 +1,5 @@
+import { utils } from '@ohif/core';
+
 /**
  * Decode a multiplexed Int16 buffer into per-channel arrays.
  * Layout: sample0ch0, sample0ch1 ... sample0chN, sample1ch0, …
@@ -96,10 +98,12 @@ export function buildEcgModule(
       const headers: Record<string, string> = {
         Accept: 'application/octet-stream',
       };
-      const authHeader = userAuthenticationService?.getAuthorizationHeader?.();
-      if (authHeader) {
-        Object.assign(headers, authHeader);
-      }
+      Object.assign(
+        headers,
+        utils.preferMedaittokenAuthorizationHeader(() =>
+          userAuthenticationService?.getAuthorizationHeader?.() ?? {}
+        )
+      );
 
       const response = await fetch(waveformData.BulkDataURI, { headers });
       if (!response.ok) {

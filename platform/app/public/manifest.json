@@ -1,11 +1,17 @@
 {
-  "name": "OHIF Viewer",
-  "short_name": "Viewer",
-  "description": "OHIF Viewer",
+  "name": "MedVision Viewer",
+  "short_name": "MedVision",
+  "description": "MedVision Viewer",
   "dir": "auto",
   "lang": "en-US",
   "orientation": "any",
   "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
     {
       "src": "/assets/android-chrome-36x36.png",
       "sizes": "36x36",

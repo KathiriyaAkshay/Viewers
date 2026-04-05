@@ -49,6 +49,10 @@ import { structuredCloneWithFunctions } from './structuredCloneWithFunctions';
 import { buildButtonCommands } from './buildButtonCommands';
 
 import { downloadBlob, downloadUrl, downloadCsv, downloadDicom } from './downloadBlob';
+import {
+  getMedaittokenSessionAuthorizationHeader,
+  preferMedaittokenAuthorizationHeader,
+} from './medaittokenAuthorizationHeader';
 
 // Commented out unused functionality.
 // Need to implement new mechanism for derived displaySets using the displaySetManager.
@@ -105,6 +109,8 @@ const utils = {
   downloadUrl,
   downloadCsv,
   downloadDicom,
+  getMedaittokenSessionAuthorizationHeader,
+  preferMedaittokenAuthorizationHeader,
 };
 
 export {
@@ -147,6 +153,8 @@ export {
   downloadUrl,
   downloadCsv,
   downloadDicom,
+  getMedaittokenSessionAuthorizationHeader,
+  preferMedaittokenAuthorizationHeader,
 };
 
 export default utils;

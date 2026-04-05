@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useImperativeHandle, forwardRef, useCallback } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/Dialog/Dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+} from '../components/Dialog/Dialog';
+import { DialogTitleWithWhiteLabelIcon } from '../components/Dialog/DialogTitleWithWhiteLabelIcon';
 import { cn } from '../lib/utils';
 
 type Position = {
@@ -141,7 +146,11 @@ const ManagedDialog = forwardRef<ManagedDialogRef, ManagedDialogProps>(
               : {}),
           }}
         >
-          {!unstyled && <DialogHeader>{title && <DialogTitle>{title}</DialogTitle>}</DialogHeader>}
+          {!unstyled && (
+            <DialogHeader>
+              {title && <DialogTitleWithWhiteLabelIcon>{title}</DialogTitleWithWhiteLabelIcon>}
+            </DialogHeader>
+          )}
           <DialogContentComponent
             {...contentProps}
             hide={() => onClose(id)}

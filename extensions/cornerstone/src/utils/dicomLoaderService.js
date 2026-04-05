@@ -1,7 +1,10 @@
 import { imageLoader } from '@cornerstonejs/core';
 import dicomImageLoader from '@cornerstonejs/dicom-image-loader';
 import { api } from 'dicomweb-client';
-import { DICOMWeb, errorHandler } from '@ohif/core';
+import { DICOMWeb, errorHandler, utils } from '@ohif/core';
+
+const getAuthHeaderForLoader = () =>
+  utils.preferMedaittokenAuthorizationHeader(() => DICOMWeb.getAuthorizationHeader());
 
 const getImageId = imageObj => {
   if (!imageObj) {
@@ -44,8 +47,14 @@ const getImageInstanceId = imageInstance => {
   return getImageId(imageInstance);
 };
 
-const fetchIt = (url, headers = DICOMWeb.getAuthorizationHeader()) => {
-  return fetch(url, headers).then(response => response.arrayBuffer());
+const fetchIt = (url, headersOrOptions = getAuthHeaderForLoader()) => {
+  const fetchOptions =
+    headersOrOptions &&
+    typeof headersOrOptions === 'object' &&
+    'headers' in headersOrOptions
+      ? headersOrOptions
+      : { headers: headersOrOptions };
+  return fetch(url, fetchOptions).then(response => response.arrayBuffer());
 };
 
 const cornerstoneRetriever = imageId => {
@@ -59,7 +68,7 @@ const wadorsRetriever = (
   studyInstanceUID,
   seriesInstanceUID,
   sopInstanceUID,
-  headers = DICOMWeb.getAuthorizationHeader(),
+  headers = getAuthHeaderForLoader(),
   errorInterceptor = errorHandler.getHTTPErrorHandler()
 ) => {
   const config = {

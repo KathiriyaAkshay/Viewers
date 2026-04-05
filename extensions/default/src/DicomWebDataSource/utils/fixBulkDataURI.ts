@@ -32,6 +32,32 @@ function fixBulkDataURI(value, instance, dicomWebConfig) {
     value.BulkDataURI = BulkDataURI;
   }
 
+  // When metadata returns absolute BulkDataURI pointing at another host:port (e.g. Orthanc :8042)
+  // but QIDO/WADO are configured against a proxy (e.g. :8000), rewrite to wadoRoot origin + path.
+  if (
+    uriConfig.rewriteAbsoluteBulkUriHost &&
+    typeof dicomWebConfig.wadoRoot === 'string' &&
+    dicomWebConfig.wadoRoot.startsWith('http')
+  ) {
+    const bulkStr =
+      typeof value.BulkDataURI === 'string' && value.BulkDataURI.startsWith('http')
+        ? value.BulkDataURI
+        : BulkDataURI;
+    if (typeof bulkStr === 'string' && bulkStr.startsWith('http')) {
+      try {
+        const bulkUrl = new URL(bulkStr);
+        const wadoUrl = new URL(dicomWebConfig.wadoRoot);
+        if (bulkUrl.origin !== wadoUrl.origin) {
+          const wadoPath = wadoUrl.pathname.replace(/\/$/, '');
+          value.BulkDataURI = `${wadoUrl.origin}${wadoPath}${bulkUrl.pathname}${bulkUrl.search}${bulkUrl.hash}`;
+          BulkDataURI = value.BulkDataURI;
+        }
+      } catch {
+        /* ignore malformed URLs */
+      }
+    }
+  }
+
   if (!BulkDataURI.startsWith('http') && !value.BulkDataURI.startsWith('/')) {
     const { StudyInstanceUID, SeriesInstanceUID } = instance;
     const isInstanceStart = BulkDataURI.startsWith('instances/') || BulkDataURI.startsWith('../');

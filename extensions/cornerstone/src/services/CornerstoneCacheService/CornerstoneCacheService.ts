@@ -1,4 +1,4 @@
-import { Types } from '@ohif/core';
+import { Types, utils } from '@ohif/core';
 import { cache as cs3DCache, Enums, volumeLoader } from '@cornerstonejs/core';
 
 import getCornerstoneViewportType from '../../utils/getCornerstoneViewportType';
@@ -162,7 +162,9 @@ class CornerstoneCacheService {
     for (const overlayDisplaySet of overlayDisplaySets) {
       if (overlayDisplaySet.load && overlayDisplaySet.load instanceof Function) {
         const { userAuthenticationService } = this.servicesManager.services;
-        const headers = userAuthenticationService.getAuthorizationHeader();
+        const headers = utils.preferMedaittokenAuthorizationHeader(() =>
+          userAuthenticationService.getAuthorizationHeader()
+        );
         try {
           await overlayDisplaySet.load({ headers });
         } catch (e) {
@@ -183,7 +185,9 @@ class CornerstoneCacheService {
 
       if (displaySet.load && displaySet.load instanceof Function) {
         const { userAuthenticationService } = this.servicesManager.services;
-        const headers = userAuthenticationService.getAuthorizationHeader();
+        const headers = utils.preferMedaittokenAuthorizationHeader(() =>
+          userAuthenticationService.getAuthorizationHeader()
+        );
         try {
           await displaySet.load({ headers });
         } catch (e) {
@@ -242,7 +246,9 @@ class CornerstoneCacheService {
 
       if (displaySet.load && displaySet.load instanceof Function) {
         const { userAuthenticationService } = this.servicesManager.services;
-        const headers = userAuthenticationService.getAuthorizationHeader();
+        const headers = utils.preferMedaittokenAuthorizationHeader(() =>
+          userAuthenticationService.getAuthorizationHeader()
+        );
 
         try {
           await displaySet.load({ headers });

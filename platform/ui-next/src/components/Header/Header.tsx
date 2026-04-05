@@ -23,6 +23,8 @@ interface HeaderProps {
     onClick: () => void;
   }>;
   isReturnEnabled?: boolean;
+  /** When false, the back arrow is hidden; logo area can still navigate if isReturnEnabled. */
+  showReturnIcon?: boolean;
   onClickReturnButton?: () => void;
   isSticky?: boolean;
   WhiteLabeling?: {
@@ -37,6 +39,7 @@ function Header({
   children,
   menuOptions,
   isReturnEnabled = true,
+  showReturnIcon = true,
   onClickReturnButton,
   isSticky = false,
   WhiteLabeling,
@@ -70,7 +73,9 @@ function Header({
               onClick={onClickReturn}
               data-cy="return-to-work-list"
             >
-              {isReturnEnabled && <Icons.ArrowLeft className="text-primary ml-1 h-7 w-7" />}
+              {isReturnEnabled && showReturnIcon && (
+                <Icons.ArrowLeft className="text-primary ml-1 h-7 w-7" />
+              )}
               <div className="ml-1">
                 {WhiteLabeling?.createLogoComponentFn?.(React, props) || <Icons.OHIFLogo />}
               </div>

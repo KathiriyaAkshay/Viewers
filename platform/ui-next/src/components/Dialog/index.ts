@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from './Dialog';
+import { DialogTitleWithWhiteLabelIcon } from './DialogTitleWithWhiteLabelIcon';
 
 export {
   Dialog,
@@ -22,4 +23,5 @@ export {
   DialogFooter,
   DialogTitle,
   DialogDescription,
+  DialogTitleWithWhiteLabelIcon,
 };

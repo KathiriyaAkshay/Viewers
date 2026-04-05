@@ -1,13 +1,32 @@
 /**
+ * Removes a query parameter from the current URL without reloading.
+ * @param location - The location object from the router.
+ * @param paramName - The query param name to remove.
+ */
+export function cleanQueryParamFromUrl(location: any, paramName: string): void {
+  if (!paramName) {
+    return;
+  }
+  const urlObj = new URL(window.location.origin + window.location.pathname + location.search);
+  urlObj.searchParams.delete(paramName);
+  const cleanUrl = urlObj.toString();
+  if (window.history?.replaceState) {
+    window.history.replaceState(null, '', cleanUrl);
+  }
+}
+
+/**
  * Updates the user authentication service with the provided token and cleans the token from the URL.
  * @param token - The token to set in the user authentication service.
  * @param location - The location object from the router.
  * @param userAuthenticationService - The user authentication service instance.
+ * @param paramNameToClean - Optional query param name to remove from URL (default: 'token').
  */
 export function updateAuthServiceAndCleanUrl(
   token: string,
   location: any,
-  userAuthenticationService: any
+  userAuthenticationService: any,
+  paramNameToClean: string = 'token'
 ): void {
   if (!token) {
     return;
@@ -24,8 +43,8 @@ export function updateAuthServiceAndCleanUrl(
   // Create a URL object with the current location
   const urlObj = new URL(window.location.origin + window.location.pathname + location.search);
 
-  // Remove the token from the URL object
-  urlObj.searchParams.delete('token');
+  // Remove the token param from the URL object
+  urlObj.searchParams.delete(paramNameToClean);
   const cleanUrl = urlObj.toString();
 
   // Update the browser's history without the token

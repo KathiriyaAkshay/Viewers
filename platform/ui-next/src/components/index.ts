@@ -22,6 +22,7 @@ import {
   DialogFooter,
   DialogTitle,
   DialogDescription,
+  DialogTitleWithWhiteLabelIcon,
 } from './Dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './Select';
 import { Clipboard } from './Clipboard';
@@ -157,6 +158,7 @@ export {
   DialogFooter,
   DialogTitle,
   DialogDescription,
+  DialogTitleWithWhiteLabelIcon,
   Combobox,
   Popover,
   PopoverContent,

@@ -96,6 +96,11 @@ export type BulkDataURIConfig = {
    * series is the default, as the metadata retrieved is series level.
    */
   relativeResolution?: 'studies' | 'series';
+  /**
+   * If true, absolute http(s) BulkDataURI whose origin differs from wadoRoot is rewritten
+   * to use wadoRoot origin + wadoRoot path prefix + bulk pathname (e.g. proxy vs direct Orthanc port).
+   */
+  rewriteAbsoluteBulkUriHost?: boolean;
 };
 
 /**
@@ -143,12 +148,14 @@ function createDicomWebApi(dicomWebConfig: DicomWebConfig, servicesManager) {
       dicomWebConfigCopy = JSON.parse(JSON.stringify(dicomWebConfig));
 
       getAuthorizationHeader = () => {
-        const xhrRequestHeaders: HeadersInterface = {};
-        const authHeaders = userAuthenticationService.getAuthorizationHeader();
-        if (authHeaders && authHeaders.Authorization) {
-          xhrRequestHeaders.Authorization = authHeaders.Authorization;
-        }
-        return xhrRequestHeaders;
+        return utils.preferMedaittokenAuthorizationHeader(() => {
+          const xhrRequestHeaders: HeadersInterface = {};
+          const authHeaders = userAuthenticationService.getAuthorizationHeader();
+          if (authHeaders && authHeaders.Authorization) {
+            xhrRequestHeaders.Authorization = authHeaders.Authorization;
+          }
+          return xhrRequestHeaders;
+        });
       };
 
       /**
@@ -184,7 +191,7 @@ function createDicomWebApi(dicomWebConfig: DicomWebConfig, servicesManager) {
         url: dicomWebConfig.qidoRoot,
         staticWado: dicomWebConfig.staticWado,
         singlepart: dicomWebConfig.singlepart,
-        headers: userAuthenticationService.getAuthorizationHeader(),
+        headers: getAuthorizationHeader(),
         errorInterceptor: errorHandler.getHTTPErrorHandler(),
         supportsFuzzyMatching: dicomWebConfig.supportsFuzzyMatching,
       };
@@ -193,7 +200,7 @@ function createDicomWebApi(dicomWebConfig: DicomWebConfig, servicesManager) {
         url: dicomWebConfig.wadoRoot,
         staticWado: dicomWebConfig.staticWado,
         singlepart: dicomWebConfig.singlepart,
-        headers: userAuthenticationService.getAuthorizationHeader(),
+        headers: getAuthorizationHeader(),
         errorInterceptor: errorHandler.getHTTPErrorHandler(),
         supportsFuzzyMatching: dicomWebConfig.supportsFuzzyMatching,
       };

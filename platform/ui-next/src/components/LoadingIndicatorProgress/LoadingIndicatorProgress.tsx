@@ -3,6 +3,7 @@ import classNames from 'classnames';
 
 import ProgressLoadingBar from '../ProgressLoadingBar';
 import { Icons } from '../Icons';
+import { getWhiteLabelFaviconSrc } from '../../utils/whiteLabelFaviconSrc';
 /**
  *  A React component that renders a loading indicator.
  * if progress is not provided, it will render an infinite loading indicator
@@ -10,6 +11,7 @@ import { Icons } from '../Icons';
  * Optionally a textBlock can be provided to display a message
  */
 function LoadingIndicatorProgress({ className, textBlock, progress }) {
+  const whiteLabelFaviconSrc = getWhiteLabelFaviconSrc();
   return (
     <div
       className={classNames(
@@ -17,7 +19,16 @@ function LoadingIndicatorProgress({ className, textBlock, progress }) {
         className
       )}
     >
-      <Icons.LoadingOHIFMark className="text-foreground h-12 w-12" />
+      {whiteLabelFaviconSrc ? (
+        <img
+          src={whiteLabelFaviconSrc}
+          alt=""
+          className="h-12 w-12 shrink-0"
+          aria-hidden
+        />
+      ) : (
+        <Icons.LoadingOHIFMark className="text-foreground h-12 w-12" />
+      )}
       <div className="w-48">
         <ProgressLoadingBar progress={progress} />
       </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../Dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitleWithWhiteLabelIcon } from '../Dialog';
 import { cn } from '../../lib/utils';
 
 export interface ModalProps {
@@ -32,7 +32,7 @@ const Modal: React.FC<ModalProps> = ({
       <DialogContent className={containerClassName}>
         {title && (
           <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
+            <DialogTitleWithWhiteLabelIcon>{title}</DialogTitleWithWhiteLabelIcon>
           </DialogHeader>
         )}
         <div className={cn('mt-2')}>{children}</div>

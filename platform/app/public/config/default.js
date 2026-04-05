@@ -3,7 +3,28 @@
 window.config = {
   name: 'config/default.js',
   routerBasename: null,
-  // whiteLabeling: {},
+  whiteLabeling: {
+    createLogoComponentFn: function (React) {
+      const publicUrl =
+        typeof window !== 'undefined' && window.PUBLIC_URL !== undefined ? window.PUBLIC_URL : '/';
+      const base = publicUrl.endsWith('/') ? publicUrl : `${publicUrl}/`;
+      const faviconSrc = `${base}favicon.svg`;
+      return React.createElement(
+        'div',
+        { className: 'flex items-center gap-2' },
+        React.createElement('img', {
+          src: faviconSrc,
+          alt: 'MedVision Viewer',
+          className: 'h-8 w-8 shrink-0',
+        }),
+        React.createElement(
+          'span',
+          { className: 'text-primary-foreground text-base font-semibold tracking-tight' },
+          'MedVision Viewer'
+        )
+      );
+    },
+  },
   extensions: [],
   modes: [],
   customizationService: {},
@@ -14,6 +35,9 @@ window.config = {
   showWarningMessageForCrossOrigin: true,
   showCPUFallbackMessage: true,
   showLoadingIndicator: true,
+  investigationalUseDialog: {
+    option: 'never',
+  },
   experimentalStudyBrowserSort: false,
   strictZSpacingForVolumeViewport: true,
   groupEnabledModesFirst: true,
@@ -106,9 +130,9 @@ window.config = {
       configuration: {
         friendlyName: 'AWS S3 Static wado server',
         name: 'aws',
-        wadoUriRoot: 'https://d14fa38qiwhyfd.cloudfront.net/dicomweb',
-        qidoRoot: 'https://d14fa38qiwhyfd.cloudfront.net/dicomweb',
-        wadoRoot: 'https://d14fa38qiwhyfd.cloudfront.net/dicomweb',
+        wadoUriRoot: 'http://localhost:8000/public-ohif',
+        qidoRoot: 'http://localhost:8000/public-ohif',
+        wadoRoot: 'http://localhost:8000/public-ohif',
         qidoSupportsIncludeField: false,
         imageRendering: 'wadors',
         thumbnailRendering: 'wadors',
@@ -123,6 +147,8 @@ window.config = {
         bulkDataURI: {
           enabled: true,
           relativeResolution: 'studies',
+          /** If metadata has absolute bulk URLs on another host (e.g. Orthanc :8042), use wadoRoot instead */
+          rewriteAbsoluteBulkUriHost: true,
           transform: url => url.replace('/pixeldata.mp4', '/rendered'),
         },
         omitQuotationForMultipartRequest: true,
@@ -135,9 +161,9 @@ window.config = {
       configuration: {
         friendlyName: 'AWS S3 Static wado secondary server',
         name: 'aws',
-        wadoUriRoot: 'https://dd14fa38qiwhyfd.cloudfront.net/dicomweb',
-        qidoRoot: 'https://dd14fa38qiwhyfd.cloudfront.net/dicomweb',
-        wadoRoot: 'https://dd14fa38qiwhyfd.cloudfront.net/dicomweb',
+        wadoUriRoot: 'http://localhost:8000/public-ohif',
+        qidoRoot: 'http://localhost:8000/public-ohif',
+        wadoRoot: 'http://localhost:8000/public-ohif',
         qidoSupportsIncludeField: false,
         supportsReject: false,
         imageRendering: 'wadors',
@@ -163,9 +189,9 @@ window.config = {
       configuration: {
         friendlyName: 'AWS S3 Static wado secondary server',
         name: 'aws',
-        wadoUriRoot: 'https://d3t6nz73ql33tx.cloudfront.net/dicomweb',
-        qidoRoot: 'https://d3t6nz73ql33tx.cloudfront.net/dicomweb',
-        wadoRoot: 'https://d3t6nz73ql33tx.cloudfront.net/dicomweb',
+        wadoUriRoot: 'http://localhost:8000/public-ohif',
+        qidoRoot: 'http://localhost:8000/public-ohif',
+        wadoRoot: 'http://localhost:8000/public-ohif',
         qidoSupportsIncludeField: false,
         supportsReject: false,
         imageRendering: 'wadors',
@@ -192,8 +218,8 @@ window.config = {
       configuration: {
         friendlyName: 'Static WADO Local Data',
         name: 'DCM4CHEE',
-        qidoRoot: 'http://localhost:5000/dicomweb',
-        wadoRoot: 'http://localhost:5000/dicomweb',
+        qidoRoot: 'http://localhost:5000/dicom-web',
+        wadoRoot: 'http://localhost:5000/dicom-web',
         qidoSupportsIncludeField: false,
         supportsReject: true,
         supportsStow: true,
@@ -214,7 +240,7 @@ window.config = {
       namespace: '@ohif/extension-default.dataSourcesModule.dicomweb',
       sourceName: 'orthanc',
       configuration: {
-        friendlyName: 'local Orthanc DICOMWeb Server',
+        friendlyName: 'local Orthanc dicom-web Server',
         name: 'DCM4CHEE',
         wadoUriRoot: 'http://localhost/pacs/dicom-web',
         qidoRoot: 'http://localhost/pacs/dicom-web',
@@ -247,10 +273,10 @@ window.config = {
 
     {
       namespace: '@ohif/extension-default.dataSourcesModule.dicomwebproxy',
-      sourceName: 'dicomwebproxy',
+      sourceName: 'dicom-webproxy',
       configuration: {
-        friendlyName: 'dicomweb delegating proxy',
-        name: 'dicomwebproxy',
+        friendlyName: 'dicom-web delegating proxy',
+        name: 'dicom-webproxy',
       },
     },
     {
@@ -282,23 +308,6 @@ window.config = {
   //     labelColor: [255, 255, 0, 1], // must be an array
   //     hoverTimeout: 1,
   //     background: 'rgba(100, 100, 100, 0.5)', // can be any valid css color
-  //   },
-  // },
-  // whiteLabeling: {
-  //   createLogoComponentFn: function (React) {
-  //     return React.createElement(
-  //       'a',
-  //       {
-  //         target: '_self',
-  //         rel: 'noopener noreferrer',
-  //         className: 'text-purple-600 line-through',
-  //         href: '_X___IDC__LOGO__LINK___Y_',
-  //       },
-  //       React.createElement('img', {
-  //         src: './Logo.svg',
-  //         className: 'w-14 h-14',
-  //       })
-  //     );
   //   },
   // },
 };

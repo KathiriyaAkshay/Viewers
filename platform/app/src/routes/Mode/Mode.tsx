@@ -10,7 +10,7 @@ import ViewportGrid from '@components/ViewportGrid';
 import Compose from './Compose';
 import loadModules from '../../pluginImports';
 import { defaultRouteInit } from './defaultRouteInit';
-import { updateAuthServiceAndCleanUrl } from './updateAuthServiceAndCleanUrl';
+import { cleanQueryParamFromUrl, updateAuthServiceAndCleanUrl } from './updateAuthServiceAndCleanUrl';
 
 const { getSplitParam } = utils;
 
@@ -72,9 +72,19 @@ export default function ModeRoute({
   const runTimeHangingProtocolId = lowerCaseSearchParams.get('hangingprotocolid');
   const runTimeStageId = lowerCaseSearchParams.get('stageid');
   const token = lowerCaseSearchParams.get('token');
+  // Accept both spellings: ?medaittoken= and ?mediaitoken= (canonical storage key is medaittoken)
+  const medaittokenFromQuery =
+    lowerCaseSearchParams.get('medaittoken') || lowerCaseSearchParams.get('mediaitoken');
 
   if (token) {
     updateAuthServiceAndCleanUrl(token, location, userAuthenticationService);
+  }
+
+  // Persist for the session and strip token params from the address bar
+  if (medaittokenFromQuery && typeof window !== 'undefined' && window.sessionStorage) {
+    window.sessionStorage.setItem('medaittoken', medaittokenFromQuery);
+    cleanQueryParamFromUrl(location, 'medaittoken');
+    cleanQueryParamFromUrl(location, 'mediaitoken');
   }
 
   // An undefined dataSourceName implies that the active data source that is already set in the ExtensionManager should be used.
